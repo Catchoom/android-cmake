@@ -42,6 +42,8 @@ set(ANDROID_THIS_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})	# Directory this CMake fil
 ##
 ## @param name
 ##   Name of the project (e.g. "MyProject"), this will also be the name of the created apk file
+## @param apk_pacakge_name
+##   Pacakge name of the application
 ## @param apk_directory
 ##   Directory were to construct the apk file in (e.g. "${CMAKE_BINARY_DIR}/apk")
 ## @param libs_directory
@@ -57,8 +59,9 @@ set(ANDROID_THIS_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})	# Directory this CMake fil
 ##   - "jarsigner" (part of the JDK)
 ##   - "zipalign" (part of the Android SDK)
 ##################################################
-macro(android_create_apk name apk_directory libs_directory android_directory assets_directory)
+macro(android_create_apk name apk_package_name apk_directory libs_directory android_directory assets_directory)
   set(ANDROID_NAME ${name})
+  set(ANDROID_APK_PACKAGE ${apk_package_name})
 
   # Create the directory for the libraries
   add_custom_command(TARGET ${ANDROID_NAME} PRE_BUILD
@@ -112,10 +115,30 @@ macro(android_create_apk name apk_directory libs_directory android_directory ass
     add_custom_command(TARGET ${ANDROID_NAME}
       COMMAND zipalign -v -f 4 bin/${ANDROID_NAME}-unsigned.apk bin/${ANDROID_NAME}.apk
       WORKING_DIRECTORY "${apk_directory}")
+    
+    # Install current version on the device/emulator
+    if(ANDROID_APK_INSTALL OR ANDROID_APK_RUN)
+      add_custom_command(TARGET ${ANDROID_NAME}
+	COMMAND adb install -r bin/${ANDROID_NAME}.apk
+	WORKING_DIRECTORY "${apk_directory}")
+    endif()
   else()
     # Let Ant create the unsigned apk file
     add_custom_command(TARGET ${ANDROID_NAME}
       COMMAND ant debug
       WORKING_DIRECTORY "${apk_directory}")
+    
+    # Install current version on the device/emulator
+    if(ANDROID_APK_INSTALL OR ANDROID_APK_RUN)
+      add_custom_command(TARGET ${ANDROID_NAME}
+	COMMAND adb install -r bin/${ANDROID_NAME}-debug.apk
+	WORKING_DIRECTORY "${apk_directory}")
+    endif()
+  endif()
+
+  # Start the application
+  if(ANDROID_APK_RUN)
+    add_custom_command(TARGET ${ANDROID_NAME}
+      COMMAND adb shell am start -n ${ANDROID_APK_PACKAGE}/android.app.NativeActivity)
   endif()
 endmacro(android_create_apk name apk_directory libs_directory assets_directory)
