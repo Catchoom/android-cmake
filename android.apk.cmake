@@ -26,7 +26,9 @@
 ##################################################
 ## Options
 ##################################################
-set(APK_API_LEVEL "10" CACHE STRING "Android APK API level")
+set(ANDROID_APK_API_LEVEL "10" CACHE STRING "Android APK API level")
+set(ANDROID_APK_INSTALL "0" CACHE BOOL "Install created apk file on the device automatically?")
+set(ANDROID_APK_RUN "0" CACHE BOOL "Run created apk file on the device automatically? (installs it automatically as well, \"ANDROID_APK_INSTALL\"-option is ignored)")
 set(ANDROID_APK_SIGNER_KEYSTORE	"~/my-release-key.keystore" CACHE STRING "Keystore for signing the apk file (only required for release apk)")
 set(ANDROID_APK_SIGNER_ALIAS "myalias" CACHE STRING "Alias for signing the apk file (only required for release apk)")
 
@@ -88,7 +90,7 @@ macro(android_create_apk name apk_package_name apk_directory libs_directory andr
   configure_file("${android_directory}/AndroidManifest.xml" "${apk_directory}/AndroidManifest.xml")
 
   add_custom_command(TARGET ${ANDROID_NAME}
-    COMMAND android update project -t android-${APK_API_LEVEL} --name ${ANDROID_NAME} --path "${apk_directory}")
+    COMMAND android update project -t android-${ANDROID_APK_API_LEVEL} --name ${ANDROID_NAME} --path "${apk_directory}")
 
   # Copy assets
   add_custom_command(TARGET ${ANDROID_NAME} PRE_BUILD
