@@ -15,7 +15,26 @@ And a few samples, to get you started.
 
 Also, used by the OpenCV project: http://opencv.org/android
 
+------------------------------------------
 THIS FORK
+------------------------------------------
+
 This fork adds the android.apk.cmake file that can be used to create an apk 
 directly from CMake. It is an edited version of the Apk.cmake file that can 
 be found here: https://github.com/Uroc327Mirrors/pixellight/tree/master/cmake/Android
+
+Usage
+------------------------------------------
+1. Clone this project
+2. Create a android ndk standalone toolchain
+2. Set these env parameters:
+ANDROID_STANDALONE_TOOLCHAIN=<path to the ndk standalone toolchain>
+ANDROID_CMAKE_HOME=<path to the android-cmake project>
+3. Include the android.apk.cmake in a cmake CMakeLists.txt by using the line:
+include("$ENV{ANDROID_CMAKE_HOME}/android.apk.cmake" REQUIRED)
+4. After your .so lib has been built call the cmake macro android_create_apk(...)
+
+Example
+-----------------------------------------
+An example project can be found here:
+https://github.com/Discordia/android-cmake-example
