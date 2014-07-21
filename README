@@ -14,3 +14,8 @@ This project includes ports of the follow:
 And a few samples, to get you started.
 
 Also, used by the OpenCV project: http://opencv.org/android
+
+THIS FORK
+This fork adds the android.apk.cmake file that can be used to create an apk 
+directly from CMake. It is an edited version of the Apk.cmake file that can 
+be found here: https://github.com/Uroc327Mirrors/pixellight/tree/master/cmake/Android
