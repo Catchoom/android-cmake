@@ -70,10 +70,10 @@ macro(android_create_apk name apk_directory libs_directory android_directory ass
     "${CMAKE_SOURCE_DIR}/libs" "${apk_directory}/libs/")
   
   # Create "build.xml", "default.properties", "local.properties" and "proguard.cfg" files
-  if(CMAKE_BUILD_TYPE MATCHES Debug)
-    set(ANDROID_APK_DEBUGGABLE "true")
-  else()
+  if(CMAKE_BUILD_TYPE MATCHES Release)
     set(ANDROID_APK_DEBUGGABLE "false")
+  else()
+    set(ANDROID_APK_DEBUGGABLE "true")
   endif()
 
   add_custom_command(TARGET ${ANDROID_NAME} PRE_BUILD
@@ -97,12 +97,7 @@ macro(android_create_apk name apk_directory libs_directory android_directory ass
     "${CMAKE_SOURCE_DIR}/assets" "${apk_directory}/assets/")
 
   # Build the apk file
-  if(CMAKE_BUILD_TYPE MATCHES Debug)
-    # Let Ant create the unsigned apk file
-    add_custom_command(TARGET ${ANDROID_NAME}
-      COMMAND ant debug
-      WORKING_DIRECTORY "${apk_directory}")
-  else()
+  if(CMAKE_BUILD_TYPE MATCHES Release)
     # Let Ant create the unsigned apk file
     add_custom_command(TARGET ${ANDROID_NAME}
       COMMAND ant release
@@ -116,6 +111,11 @@ macro(android_create_apk name apk_directory libs_directory android_directory ass
     # Align the apk file
     add_custom_command(TARGET ${ANDROID_NAME}
       COMMAND zipalign -v -f 4 bin/${ANDROID_NAME}-unsigned.apk bin/${ANDROID_NAME}.apk
+      WORKING_DIRECTORY "${apk_directory}")
+  else()
+    # Let Ant create the unsigned apk file
+    add_custom_command(TARGET ${ANDROID_NAME}
+      COMMAND ant debug
       WORKING_DIRECTORY "${apk_directory}")
   endif()
 endmacro(android_create_apk name apk_directory libs_directory assets_directory)
