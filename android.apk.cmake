@@ -87,6 +87,12 @@ macro(android_create_apk name apk_package_name apk_directory libs_directory andr
     COMMAND ${CMAKE_COMMAND} -E copy_directory
     "${android_directory}/res" "${apk_directory}/res/")
 
+  add_custom_command(TARGET ${ANDROID_NAME} PRE_BUILD
+    COMMAND ${CMAKE_COMMAND} -E make_directory "${apk_directory}/src")
+  add_custom_command(TARGET ${ANDROID_NAME} PRE_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    "${android_directory}/src" "${apk_directory}/src/")
+
   configure_file("${android_directory}/AndroidManifest.xml" "${apk_directory}/AndroidManifest.xml")
 
   add_custom_command(TARGET ${ANDROID_NAME}
